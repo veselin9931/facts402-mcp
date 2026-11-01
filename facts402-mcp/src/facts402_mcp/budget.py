@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from decimal import ROUND_DOWN, Decimal
 
+from .catalog import usd_text
+
 USDC_DECIMALS = 6
 _ATOMIC_PER_USD = Decimal(10) ** USDC_DECIMALS
 
@@ -15,9 +17,7 @@ def usd_to_atomic(usd: Decimal | str) -> int:
 
 def atomic_to_usd(atomic: int) -> str:
     """`50000 -> "0.05"`; always at least two decimals."""
-    value = Decimal(atomic) / _ATOMIC_PER_USD
-    cents = value.quantize(Decimal("0.01"))
-    return str(cents) if cents == value else f"{value.normalize():f}"
+    return usd_text(Decimal(atomic) / _ATOMIC_PER_USD)
 
 
 class BudgetRefused(Exception):

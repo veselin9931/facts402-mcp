@@ -15,7 +15,7 @@ from x402.http.utils import ResponseBodyTooLargeError
 
 from . import __version__
 from .budget import Budget, BudgetRefused, atomic_to_usd, usd_to_atomic
-from .catalog import Style, ToolSpec, thaw
+from .catalog import Style, ToolSpec, thaw, usd_text
 from .config import ENV_MAX_PER_CALL, ENV_PRIVATE_KEY, ENV_SESSION_BUDGET
 from .wallet import FACTS402_PAY_TO, Wallet
 
@@ -44,15 +44,21 @@ class _Request:
     headers: dict[str, str] = field(default_factory=dict)
 
 
+def _query_value(value: Any) -> Any:
+    """JSON Schema counts 5.0 as an integer; send it as "5", which integer-only query patterns accept."""
+    return int(value) if isinstance(value, float) and value.is_integer() else value
+
+
 def build_request(spec: ToolSpec, args: Mapping[str, Any]) -> _Request:
     args = dict(args)
     if spec.style is Style.JSON_BODY:
         return _Request(spec.route.method, spec.route.url, body=args)
     if spec.style is Style.QUERY:
-        return _Request(spec.route.method, spec.route.url, params=args)
+        return _Request(spec.route.method, spec.route.url, params={k: _query_value(v) for k, v in args.items()})
     watch_id, secret = args.pop("watch_id"), args.pop("watch_secret")
     url = spec.route.url.replace("{watch_id}", watch_id)
-    return _Request(spec.route.method, url, params=args, headers={"Authorization": f"Bearer {secret}"})
+    params = {k: _query_value(v) for k, v in args.items()}
+    return _Request(spec.route.method, url, params=params, headers={"Authorization": f"Bearer {secret}"})
 
 
 _validators: dict[str, Draft202012Validator] = {}
@@ -175,7 +181,7 @@ class Caller:
             reason = _rejection_reason(response) or "unknown"
             error["error"] = f"payment was not accepted ({reason}), you were not charged"
             if reason == "insufficient_funds":
-                error["hint"] = f"fund {self.wallet.address} with at least ${spec.price_usd:.2f} USDC on Base mainnet"
+                error["hint"] = f"fund {self.wallet.address} with at least ${usd_text(spec.price_usd)} USDC on Base mainnet"
         return Outcome({**error, **self._session_totals()}, is_error=True)
 
     # --- helpers ------------------------------------------------------------------------------------------
@@ -191,7 +197,7 @@ class Caller:
         message = {
             "error": f"payments are off ({reason}); nothing was called or paid",
             "tool": spec.name,
-            "price_usd": f"{spec.price_usd:.2f}",
+            "price_usd": usd_text(spec.price_usd),
             "how_to_enable": (
                 f"Set {ENV_PRIVATE_KEY} to the private key of a Base mainnet wallet you control that holds a little USDC "
                 f"(no ETH needed: x402 'exact' payments are gasless EIP-3009 signatures). Optional limits: "

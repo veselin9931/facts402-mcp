@@ -1,16 +1,16 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "com.facts402/facts402-mcp",
-  "title": "facts402: fact checks for agents",
-  "description": "Pay-per-call fact checks for agents: IBAN, EU VAT, OFAC sanctions, LEI, phone, email, FX",
-  "version": "0.1.0",
+  "title": "facts402: x402 API finder + fact checks",
+  "description": "Find the right paid x402 API, plus fact checks: IBAN, EU VAT, OFAC sanctions, LEI, FX",
+  "version": "0.1.1",
   "websiteUrl": "https://api.facts402.com",
   "packages": [
     {
       "registryType": "pypi",
       "registryBaseUrl": "https://pypi.org",
       "identifier": "facts402-mcp",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "runtimeHint": "uvx",
       "transport": {
         "type": "stdio"
@@ -18,8 +18,8 @@
       "environmentVariables": [
         {
           "name": "X402_PRIVATE_KEY",
-          "description": "Private key of your own Base mainnet wallet holding a little USDC. Needed to call the tools: without it they only report their price.",
-          "isRequired": true,
+          "description": "Private key of your own Base mainnet wallet holding a little USDC. Optional: without it only the free tools work.",
+          "isRequired": false,
           "isSecret": true
         },
         {

@@ -1,10 +1,10 @@
 {
   "manifest_version": "0.4",
   "name": "facts402-mcp",
-  "display_name": "facts402: fact checks for agents (IBAN, VAT, sanctions, FX)",
-  "version": "0.1.0",
-  "description": "Pay-per-call fact checks for agents: IBAN, EU VAT, OFAC sanctions, LEI, phone, email, FX",
-  "long_description": "Verified fact checks at $0.01 per call (x402, USDC on Base), paid from the user's own wallet within a per-call cap and session budget: IBAN/BIC validation, EU VAT (VIES), OFAC sanctions screening, GLEIF LEI company lookup, phone and email validation, ECB FX conversion, domain age (RDAP/WHOIS), business days and holidays, weather, sunrise/sunset and Base token contract facts. Each tool states its price.",
+  "display_name": "facts402: x402 API finder and fact checks (IBAN, VAT, sanctions, FX)",
+  "version": "0.1.1",
+  "description": "Find the right paid x402 API, plus fact checks: IBAN, EU VAT, OFAC sanctions, LEI, FX",
+  "long_description": "Need a paid API for a task? x402_recommend ($0.005, or the free x402_recommend_preview) ranks x402 endpoints across the ecosystem by relevance, real on-chain buyers and liveness. Verified fact checks at $0.01 per call (x402, USDC on Base), paid from the user's own wallet within a per-call cap and session budget: IBAN/BIC validation, EU VAT (VIES), OFAC sanctions screening, GLEIF LEI company lookup, phone and email validation, ECB FX conversion, domain age (RDAP/WHOIS), business days and holidays, weather, sunrise/sunset and Base token contract facts. Each tool states its price.",
   "author": {
     "name": "facts402",
     "url": "https://api.facts402.com"
@@ -12,6 +12,9 @@
   "homepage": "https://api.facts402.com",
   "license": "MIT",
   "keywords": [
+    "x402",
+    "api-discovery",
+    "api-finder",
     "iban",
     "bic",
     "vat",
@@ -26,7 +29,6 @@
     "phone",
     "email",
     "whois",
-    "x402",
     "usdc"
   ],
   "server": {
@@ -52,8 +54,8 @@
       "type": "string",
       "title": "Wallet private key",
       "sensitive": true,
-      "required": true,
-      "description": "Private key of your own Base mainnet wallet holding a little USDC. Needed to call the tools: without it they only report their price."
+      "required": false,
+      "description": "Private key of your own Base mainnet wallet holding a little USDC. Optional: without it only the free tools work."
     },
     "max_per_call_usd": {
       "type": "string",
@@ -71,6 +73,14 @@
     }
   },
   "tools": [
+    {
+      "name": "x402_recommend",
+      "description": "Which paid API should I call for this task? Describe the need in plain words (e.g. 'web search', 'honeypot check base token', 'IBAN validation') and get the top-k x402 endpoints across the ecosystem: url, method, price, payment network, 30-day on-chain buyers, live 402 probe, risk flags and score, ranked by relevance, real buyers, recency and liveness (x402-list.com catalog, CC BY 4.0, plus sellers' own 402 quotes). Use it before paying an unknown API. No match = 404, not charged. Price: $0.005 USDC per call via x402 on Base, paid from your own wallet (X402_PRIVATE_KEY) within your per-call cap and session budget; charged only for a successful answer."
+    },
+    {
+      "name": "x402_recommend_preview",
+      "description": "Free teaser of x402_recommend: the single top pick (host, price, 30-day payers) for a need, without url, risk flags or ranking details. FREE: no wallet or payment needed."
+    },
     {
       "name": "iban_check",
       "description": "Validate an IBAN (structure, mod-97 and national BBAN checksum) and return country, bank code, account code, bank name, BIC/SWIFT and SEPA membership. Use before a payout, invoice or SEPA transfer. Price: $0.01 USDC per call via x402 on Base, paid from your own wallet (X402_PRIVATE_KEY) within your per-call cap and session budget; charged only for a successful answer."

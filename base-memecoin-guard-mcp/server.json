@@ -3,14 +3,14 @@
   "name": "com.facts402/base-memecoin-guard",
   "title": "Base Memecoin Guard",
   "description": "Base memecoin safety for trading agents: honeypot, rug pull, exit liquidity, smart money",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "websiteUrl": "https://guard.facts402.com",
   "packages": [
     {
       "registryType": "pypi",
       "registryBaseUrl": "https://pypi.org",
       "identifier": "base-memecoin-guard-mcp",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "runtimeHint": "uvx",
       "transport": {
         "type": "stdio"

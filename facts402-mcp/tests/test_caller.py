@@ -6,6 +6,7 @@ import pytest
 
 from facts402_mcp.app import caller_from_settings
 from facts402_mcp.budget import usd_to_atomic
+from facts402_mcp.caller import build_request
 from facts402_mcp.catalog import Route, Style, ToolSpec
 from facts402_mcp.config import Settings
 from facts402_mcp.testing import (
@@ -229,3 +230,29 @@ async def test_concurrent_calls_cannot_overspend(catalog, wallet):
     # The first two reserve 0.30 + 0.20 (their caps); the third finds nothing left.
     assert sum(not r.is_error for r in results) == 2
     assert caller.budget.spent == usd_to_atomic("0.02")
+
+
+async def test_recommend_sends_numbers_as_query_strings_and_pays_half_a_cent(catalog, wallet):
+    service = FakeService(paywall("0.005", lambda r: httpx.Response(200, json={"picks": []})))
+    caller = make_caller(service, wallet)
+    outcome = await caller.call(catalog["x402_recommend"], {"need": "web search", "max_price": 0.05, "k": 3})
+    assert outcome.payload["payment"]["paid_usd"] == "0.005"
+    assert str(service.requests[-1].url) == "https://api.facts402.com/v1/recommend?need=web+search&max_price=0.05&k=3"
+    assert caller.budget.spent == usd_to_atomic("0.005")
+
+
+async def test_recommend_preview_is_free(catalog):
+    service = FakeService(lambda r: httpx.Response(200, json={"top_pick": {"host": "example.com"}}))
+    outcome = await make_caller(service, None).call(catalog["x402_recommend_preview"], {"need": "iban validation"})
+    assert outcome.payload == {"top_pick": {"host": "example.com"}}
+    assert str(service.requests[0].url) == "https://api.facts402.com/v1/recommend/preview?need=iban+validation"
+
+
+async def test_paid_tool_without_key_shows_sub_cent_price(catalog):
+    outcome = await make_caller(FakeService(never_called), None).call(catalog["x402_recommend"], {"need": "web search"})
+    assert outcome.payload["price_usd"] == "0.005"
+
+
+def test_integral_floats_go_out_as_integers(catalog):
+    request = build_request(catalog["x402_recommend"], {"need": "web search", "k": 5.0, "max_price": 1.0})
+    assert request.params == {"need": "web search", "k": 5, "max_price": 1}

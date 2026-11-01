@@ -120,9 +120,7 @@ def snapshot(entries: list[Entry], http: httpx.Client) -> dict[str, Any]:
 def main(argv: list[str]) -> None:
     with httpx.Client(timeout=60, follow_redirects=False) as http:
         for dist in selected(argv):
-            module = tools(dist)
-            hand_written = getattr(module, "HAND_WRITTEN_SCHEMAS", {})
-            entries = [e for e in module.ENTRIES if e.name not in hand_written]
+            entries = list(tools(dist).ENTRIES)  # hand-written schemas override these at load time
             out = module_dir(dist) / SNAPSHOT_FILE
             text = json.dumps(snapshot(entries, http), indent=1, sort_keys=True, ensure_ascii=False)
             out.write_text(text + "\n", encoding="utf-8")

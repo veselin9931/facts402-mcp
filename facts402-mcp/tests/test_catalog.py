@@ -3,7 +3,7 @@ from decimal import Decimal
 import pytest
 from jsonschema import Draft202012Validator
 
-from facts402_mcp.catalog import FACTS, Entry, build_catalog, thaw
+from facts402_mcp.catalog import FACTS, Entry, build_catalog, thaw, usd_text
 from facts402_mcp.tools import ENTRIES
 
 UTILITY_TOOLS = {"iban_check", "eu_vat_check", "sanctions_screen", "lei_lookup", "phone_check", "email_check",
@@ -11,11 +11,29 @@ UTILITY_TOOLS = {"iban_check", "eu_vat_check", "sanctions_screen", "lei_lookup",
 
 
 def test_twelve_paid_utility_tools_at_one_cent(catalog):
-    assert set(catalog) == UTILITY_TOOLS
-    for spec in catalog.values():
-        assert spec.paid and spec.price_usd == Decimal("0.01"), spec.name
+    assert set(catalog) == UTILITY_TOOLS | {"x402_recommend", "x402_recommend_preview"}
+    for name in UTILITY_TOOLS:
+        spec = catalog[name]
+        assert spec.paid and spec.price_usd == Decimal("0.01"), name
         assert spec.route.origin == FACTS
         assert "Price: $0.01 USDC per call" in spec.description
+
+
+def test_recommender_costs_half_a_cent_and_has_a_free_preview(catalog):
+    assert catalog["x402_recommend"].price_usd == Decimal("0.005")
+    assert "Price: $0.005 USDC per call" in catalog["x402_recommend"].description
+    assert not catalog["x402_recommend_preview"].paid
+    assert "FREE" in catalog["x402_recommend_preview"].description
+
+
+def test_recommender_takes_numbers_not_the_specs_pattern_strings(catalog):
+    props = catalog["x402_recommend"].input_schema["properties"]
+    assert (props["max_price"]["type"], props["k"]["type"]) == ("number", "integer")
+
+
+@pytest.mark.parametrize(("price", "text"), [("0.01", "0.01"), ("0.6", "0.60"), ("0.005", "0.005"), ("1", "1.00")])
+def test_usd_text(price, text):
+    assert usd_text(Decimal(price)) == text
 
 
 def test_schemas_are_valid_objects_without_top_level_combinators(catalog):
@@ -29,7 +47,7 @@ def test_schemas_are_valid_objects_without_top_level_combinators(catalog):
 def test_descriptions_carry_the_search_terms_agents_use(catalog):
     text = " ".join(s.description for s in catalog.values()).lower()
     for term in ("iban", "bic", "vat", "vies", "sanctions", "ofac", "aml", "kyc", "kyb", "lei", "exchange rate",
-                 "phone", "email", "whois", "holidays", "weather"):
+                 "phone", "email", "whois", "holidays", "weather", "which paid api", "x402"):
         assert term in text, term
 
 

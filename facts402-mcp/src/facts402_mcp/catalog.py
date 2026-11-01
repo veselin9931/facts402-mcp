@@ -2,7 +2,8 @@
 
 A server package lists its routes as `Entry` objects (route + hand-written description). Input schemas and
 prices come from that package's `schemas.json`, a snapshot of each origin's live /openapi.json written by
-`scripts/sync_schemas.py`. Routes without an OpenAPI request schema get a hand-written one.
+`scripts/sync_schemas.py`. A hand-written schema replaces the snapshot's where the OpenAPI one is missing or
+unfriendly to agents; the price still comes from the snapshot.
 """
 
 from __future__ import annotations
@@ -82,12 +83,18 @@ class ToolSpec:
         if not self.paid:
             return f"{self.summary} FREE: no wallet or payment needed."
         return (
-            f"{self.summary} Price: ${self.price_usd:.2f} USDC per call via x402 on Base, paid from your own wallet "
+            f"{self.summary} Price: ${usd_text(self.price_usd)} USDC per call via x402 on Base, paid from your own wallet "
             "(X402_PRIVATE_KEY) within your per-call cap and session budget; charged only for a successful answer."
         )
 
 
 Catalog = Mapping[str, ToolSpec]
+
+
+def usd_text(price: Decimal) -> str:
+    """`0.05 -> "0.05"`, `0.6 -> "0.60"`, `0.005 -> "0.005"`: cents, or more digits when a price needs them."""
+    cents = price.quantize(Decimal("0.01"))
+    return str(cents) if cents == price else f"{price.normalize():f}"
 
 
 def _freeze(value: Any) -> Any:
@@ -114,12 +121,10 @@ def load_snapshot(package: str) -> Mapping[str, Any]:
 
 def _spec(entry: Entry, snapshot: Mapping[str, Any], hand_written: Mapping[str, Any]) -> ToolSpec:
     route = entry.route
-    if entry.name in hand_written:
-        schema, price = hand_written[entry.name], None
-    else:
-        if route.key not in snapshot:
-            raise KeyError(f"{route.key} missing from {SNAPSHOT_FILE}; run scripts/sync_schemas.py")
-        schema, price = snapshot[route.key]["input_schema"], snapshot[route.key]["price_usd"]
+    if route.key not in snapshot:
+        raise KeyError(f"{route.key} missing from {SNAPSHOT_FILE}; run scripts/sync_schemas.py")
+    schema = hand_written.get(entry.name, snapshot[route.key]["input_schema"])
+    price = snapshot[route.key]["price_usd"]
     if entry.paid and price is None:
         raise ValueError(f"paid tool {entry.name} has no price in {SNAPSHOT_FILE}")
     return ToolSpec(

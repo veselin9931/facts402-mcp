@@ -5,16 +5,18 @@ Two servers come from one codebase. Each is listed separately in every registry:
 | Package (PyPI) | Registry name | Tools | Audience |
 |---|---|---|---|
 | `base-memecoin-guard-mcp` (flagship) | `com.facts402/base-memecoin-guard` | 22 (15 paid, 7 free): Guard, Pulse, Signals, Watch | Base trading agents |
-| `facts402-mcp` | `com.facts402/facts402-mcp` | 12 paid utility checks at $0.01 | General agent builders |
+| `facts402-mcp` | `com.facts402/facts402-mcp` | 14: `x402_recommend` ($0.005) + free preview, 12 utility checks at $0.01 | General agent builders |
 
 `facts402-mcp` also contains the shared core (HTTP caller, x402 wallet, budget, server plumbing), and
 `base-memecoin-guard-mcp` depends on it. So that is two PyPI uploads, and **`facts402-mcp` goes first**.
 
-Nothing here has been run. Every step that creates an account, uploads a package or registers a name is for
-the owner to do by hand. Checked on 2026-11-01:
-- Both PyPI names are free.
-- The MCP Registry has no `facts402` or `memecoin` server.
-- `facts402.com` has no TXT record at its apex (and no A record, which is fine for DNS verification).
+**Status:**
+- 0.1.0 was published on 2026-11-01: on PyPI, in the official MCP Registry, and in the public repo
+  https://github.com/veselin9931/facts402-mcp.
+- 0.1.1 is prepared but not published. To release it, follow section 6.
+
+Every step that uploads a package or registers a name is for the owner to do by hand. The account and DNS
+setup below was needed only for the first release.
 
 ## 0. Decide before the first upload
 
@@ -24,7 +26,7 @@ the owner to do by hand. Checked on 2026-11-01:
 | Flagship name | `base-memecoin-guard-mcp` / `com.facts402/base-memecoin-guard` | Package folder, `pyproject.toml`, `server.py` `INFO`, `server.json`, README marker, `Dockerfile`, `smithery.yaml`, `llms-install.md`, `scripts/_packages.py`. The kit test lists anything you missed. |
 | Registry namespace | `com.facts402/*` (DNS) | `server.json` `name` and the `mcp-name:` comment at the top of the README, in both packages |
 | Glama maintainer | `veselin9931` in `glama.json` | Use the owner's real GitHub username |
-| Version | `0.1.0` | `pyproject.toml`, `__init__.py`, `server.json` (twice) and `Dockerfile`, then `python scripts/write_manifest.py` |
+| Version | `0.1.1` | `pyproject.toml`, `__init__.py`, `server.json` (twice) and `Dockerfile`, then `python scripts/write_manifest.py` |
 
 A PyPI version can be uploaded only once. Before uploading, from `A2A_MICROPAYMENTS_TRACK/mcp`:
 
@@ -82,7 +84,7 @@ uvx base-memecoin-guard-mcp
 uvx facts402-mcp
 ```
 
-Each should print `<package> 0.1.0: payments off (no X402_PRIVATE_KEY); ...` on stderr and then wait for MCP
+Each should print `<package> <version>: payments off (no X402_PRIVATE_KEY); ...` on stderr and then wait for MCP
 input (stop it with Ctrl+C). Then add it to Claude Desktop or Claude Code with the README snippet and call
 `guard_preview`, which is free.
 
@@ -124,6 +126,8 @@ Wait until the PyPI uploads are live: the registry reads the README marker from 
 
 PulseMCP and the other registries that mirror the official one pick the servers up from there.
 
+Directory submissions (Glama, Smithery, mcp.so, PulseMCP) after a release: see SUBMISSIONS.md.
+
 ## 4. Smithery
 
 Smithery now distributes local stdio servers as MCPB bundles. Each package's `manifest.json` is its bundle
@@ -164,7 +168,7 @@ The same `.mcpb` files can be offered as one-click Claude Desktop installs.
 1. Bump the versions (section 0).
 2. If a route changed, run `python scripts/sync_schemas.py`.
 3. Run `python scripts/write_manifest.py`.
-4. When the core's minor version changes (`facts402-mcp` 0.2), widen the guard's `facts402-mcp>=0.1.0,<0.2`
+4. When the core's minor version changes (`facts402-mcp` 0.2), widen the guard's `facts402-mcp>=0.1.1,<0.2`
    dependency in `base-memecoin-guard-mcp/pyproject.toml` and release both.
 5. If the services' receiving address ever changes, update `FACTS402_PAY_TO` in `facts402_mcp/wallet.py` and
    release first: installed clients pay that address only and will refuse quotes for any other.

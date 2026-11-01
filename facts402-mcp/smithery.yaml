@@ -5,13 +5,12 @@ startCommand:
   type: stdio
   configSchema:
     type: object
-    required: [x402PrivateKey]
     properties:
       x402PrivateKey:
         type: string
         description: >-
           Private key of your own Base mainnet wallet holding a little USDC (use a dedicated hot wallet).
-          Needed to call the tools: without it they only report their price.
+          Optional: without it only the free tools work.
       maxPerCallUsd:
         type: string
         default: "0.30"

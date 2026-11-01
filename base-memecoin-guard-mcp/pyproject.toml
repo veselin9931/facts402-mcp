@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "base-memecoin-guard-mcp"
-version = "0.1.0"
+version = "0.1.1"
 description = "MCP server for Base memecoin trading agents: honeypot and rug pull checks, exit liquidity, insider/sniper forensics, smart money and copy trade signals, social attention, position watch alerts. Pay per call with x402 USDC."
 readme = "README.md"
 license = "MIT"
@@ -23,7 +23,7 @@ classifiers = [
     "Topic :: Office/Business :: Financial :: Investment",
 ]
 # The shared client, payment and budget code lives in facts402-mcp.
-dependencies = ["facts402-mcp>=0.1.0,<0.2"]
+dependencies = ["facts402-mcp>=0.1.1,<0.2"]
 
 [project.optional-dependencies]
 test = ["pytest>=8", "pytest-asyncio>=0.24"]

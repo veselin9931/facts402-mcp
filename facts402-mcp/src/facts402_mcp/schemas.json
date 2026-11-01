@@ -1,6 +1,47 @@
 {
- "generated_at": "2026-11-01T15:40:57+00:00",
+ "generated_at": "2026-11-01T21:49:55+00:00",
  "routes": {
+  "GET https://api.facts402.com/v1/recommend": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {
+     "k": {
+      "description": "Number of picks, 1-10 (default 5)",
+      "pattern": "^([1-9]|10)$",
+      "type": "string"
+     },
+     "max_price": {
+      "description": "Max price per call in USD (default 0.05)",
+      "pattern": "^\\d+(\\.\\d+)?$",
+      "type": "string"
+     },
+     "need": {
+      "description": "What you want to do, in plain words, e.g. 'web search' or 'IBAN validation'",
+      "maxLength": 200,
+      "minLength": 2,
+      "type": "string"
+     },
+     "network": {
+      "description": "CAIP-2 payment network (default eip155:8453) or 'any'",
+      "type": "string"
+     }
+    },
+    "required": [
+     "need"
+    ],
+    "type": "object"
+   },
+   "price_usd": "0.005"
+  },
+  "GET https://api.facts402.com/v1/recommend/preview": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {},
+    "required": [],
+    "type": "object"
+   },
+   "price_usd": null
+  },
   "POST https://api.facts402.com/business-days": {
    "input_schema": {
     "properties": {

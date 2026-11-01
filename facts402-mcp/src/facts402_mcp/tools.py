@@ -1,12 +1,22 @@
-"""The facts402 utility tools: general-purpose fact checks at api.facts402.com, $0.01 each."""
+"""The facts402 utility tools: fact checks at api.facts402.com ($0.01 each) and the x402 API recommender."""
 
 from __future__ import annotations
 
 from functools import cache
+from typing import Any
 
-from .catalog import FACTS, Catalog, Entry, build_catalog
+from .catalog import FACTS, Catalog, Entry, Style, build_catalog
 
 ENTRIES: tuple[Entry, ...] = (
+    Entry("x402_recommend", "Find the right paid x402 API", "GET", FACTS, "/v1/recommend",
+          "Which paid API should I call for this task? Describe the need in plain words (e.g. 'web search', "
+          "'honeypot check base token', 'IBAN validation') and get the top-k x402 endpoints across the ecosystem: "
+          "url, method, price, payment network, 30-day on-chain buyers, live 402 probe, risk flags and score, "
+          "ranked by relevance, real buyers, recency and liveness (x402-list.com catalog, CC BY 4.0, plus sellers' "
+          "own 402 quotes). Use it before paying an unknown API. No match = 404, not charged.", style=Style.QUERY),
+    Entry("x402_recommend_preview", "x402 API finder preview", "GET", FACTS, "/v1/recommend/preview",
+          "Free teaser of x402_recommend: the single top pick (host, price, 30-day payers) for a need, without url, "
+          "risk flags or ranking details.", paid=False, style=Style.QUERY),
     Entry("iban_check", "IBAN and BIC validation", "POST", FACTS, "/iban",
           "Validate an IBAN (structure, mod-97 and national BBAN checksum) and return country, bank code, "
           "account code, bank name, BIC/SWIFT and SEPA membership. Use before a payout, invoice or SEPA transfer."),
@@ -55,6 +65,31 @@ ENTRIES: tuple[Entry, ...] = (
 )
 
 
+_NEED = {"type": "string", "minLength": 2, "maxLength": 200,
+         "description": "what you want to do, in plain words, e.g. 'web search' or 'IBAN validation'"}
+
+# The OpenAPI spec types max_price and k as pattern-checked strings; agents send numbers. httpx renders these
+# numbers as the strings the route expects.
+HAND_WRITTEN_SCHEMAS: dict[str, dict[str, Any]] = {
+    "x402_recommend": {
+        "type": "object",
+        "properties": {
+            "need": _NEED,
+            "max_price": {"type": "number", "minimum": 0.001, "maximum": 100,
+                          "description": "max price per call in USD (default 0.05)"},
+            "k": {"type": "integer", "minimum": 1, "maximum": 10, "description": "number of picks (default 5)"},
+            "network": {"type": "string", "pattern": "^([a-z0-9-]+:[A-Za-z0-9-]+|any)$",
+                        "description": "CAIP-2 payment network (default eip155:8453 = Base) or 'any'"},
+        },
+        "required": ["need"],
+        "additionalProperties": False,
+    },
+    "x402_recommend_preview": {
+        "type": "object", "properties": {"need": _NEED}, "required": ["need"], "additionalProperties": False,
+    },
+}
+
+
 @cache
 def catalog() -> Catalog:
-    return build_catalog(__package__, ENTRIES)
+    return build_catalog(__package__, ENTRIES, HAND_WRITTEN_SCHEMAS)

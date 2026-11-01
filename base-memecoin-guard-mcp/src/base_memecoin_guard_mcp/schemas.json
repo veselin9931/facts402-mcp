@@ -1,6 +1,15 @@
 {
- "generated_at": "2026-11-01T15:40:58+00:00",
+ "generated_at": "2026-11-01T21:49:56+00:00",
  "routes": {
+  "DELETE https://watch.facts402.com/v1/watch/{watch_id}": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {},
+    "required": [],
+    "type": "object"
+   },
+   "price_usd": null
+  },
   "GET https://guard.facts402.com/v1/guard/preview": {
    "input_schema": {
     "additionalProperties": false,
@@ -168,6 +177,24 @@
     "type": "object"
    },
    "price_usd": "0.05"
+  },
+  "GET https://watch.facts402.com/v1/watch/{watch_id}": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {},
+    "required": [],
+    "type": "object"
+   },
+   "price_usd": null
+  },
+  "GET https://watch.facts402.com/v1/watch/{watch_id}/events": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {},
+    "required": [],
+    "type": "object"
+   },
+   "price_usd": null
   },
   "POST https://guard.facts402.com/v1/guard/batch": {
    "input_schema": {

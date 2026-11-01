@@ -2,7 +2,9 @@
 
 <!-- mcp-name: com.facts402/facts402-mcp -->
 
-**Verified fact checks for AI agents, $0.01 per call.** Validate an IBAN before a payout. Check an EU VAT number
+**Find the right paid API for a task, and verified fact checks for AI agents.** Before an agent pays an
+unknown API, `x402_recommend` ranks the x402 endpoints that fit the task by relevance, real on-chain buyers and
+liveness, for $0.005 (the preview is free). And at $0.01 per call: validate an IBAN before a payout. Check an EU VAT number
 in VIES before invoicing. Screen a name against OFAC sanctions. Look up a company's LEI. Validate a phone number
 or email before outreach. Convert currency at official ECB rates. Check how old a domain is. These are small,
 exact answers an agent can rely on, with no API keys or sign-up.
@@ -14,6 +16,8 @@ session budget you set.
 
 | Tool | Price (USDC) | Use it to |
 |---|---|---|
+| `x402_recommend` | $0.005 | Find the best paid x402 endpoints for a task: url, price, network, 30-day buyers, liveness, risk flags, score |
+| `x402_recommend_preview` | free | See the single top pick (host, price, buyers) for a task |
 | `iban_check` | $0.01 | Validate an IBAN and get bank name, BIC and SEPA membership |
 | `eu_vat_check` | $0.01 | Check an EU VAT number in VIES: status, company name and address |
 | `sanctions_screen` | $0.01 | Fuzzy-screen a person, company, vessel or aircraft against the OFAC SDN list |
@@ -27,7 +31,10 @@ session budget you set.
 | `sun_times` | $0.01 | Get sunrise, sunset, golden hour and day length |
 | `base_token_check` | $0.01 | Get raw on-chain facts for a Base ERC-20 contract (owner, proxy, mint / pause / blacklist) |
 
-The service charges only for a successful (2xx) answer: invalid input and upstream errors are never charged.
+The service charges only for a successful (2xx) answer: invalid input, upstream errors and a recommend query
+with no match (404) are never charged. Recommendations use the [x402-list.com](https://x402-list.com) catalog
+(CC BY 4.0) and sellers' own 402 quotes, filtered and re-scored by facts402; facts402's own APIs are ranked with
+the same formula.
 For Base memecoin trading safety (honeypot, rug pull, exit liquidity, smart money), see
 [base-memecoin-guard-mcp](https://pypi.org/project/base-memecoin-guard-mcp/).
 
@@ -35,11 +42,11 @@ For Base memecoin trading safety (honeypot, rug pull, exit liquidity, smart mone
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `X402_PRIVATE_KEY` | (unset) | Private key of a Base mainnet wallet you control that holds some USDC. Without it, tools return their price and setup steps and pay nothing. |
+| `X402_PRIVATE_KEY` | (unset) | Private key of a Base mainnet wallet you control that holds some USDC. Without it, `x402_recommend_preview` works and the paid tools return their price and setup steps, paying nothing. |
 | `X402_MAX_PER_CALL_USD` | `0.30` | The most one call may pay. |
 | `X402_SESSION_BUDGET_USD` | `2.00` | The most the server may spend until it restarts. |
 
-- Use a **dedicated hot wallet** with a small balance. One dollar of USDC buys 100 checks.
+- Use a **dedicated hot wallet** with a small balance. One dollar of USDC buys 100 checks or 200 recommendations.
 - No ETH is needed: x402 `exact` payments are gasless EIP-3009 USDC authorisations.
 - The key stays on your machine. It is never logged or returned, and it signs only the one request you made.
 - Payments go **only** to the facts402 receiving address
@@ -111,6 +118,7 @@ Use `~/.codeium/windsurf/mcp_config.json`:
 
 ## Example prompts
 
+- "Which paid API should I use for web search? Show me the cheapest live one with real buyers."
 - "Validate IBAN DE89 3704 0044 0532 0130 00 and tell me the bank."
 - "Is IE6388047V a valid VAT number? What company is it?"
 - "Screen 'Banco Nacional de Cuba' against OFAC sanctions."

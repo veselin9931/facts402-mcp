@@ -5,7 +5,7 @@ Two MCP servers that give AI agents pay-per-call (x402, USDC on Base) access to 
 | Package | What | Install |
 |---|---|---|
 | [`base-memecoin-guard-mcp`](base-memecoin-guard-mcp) | Base memecoin safety and trading intel: honeypot / rug / insider and bundle forensics, exit liquidity at your size, social attention, smart-money signals, position watch | `uvx base-memecoin-guard-mcp` |
-| [`facts402-mcp`](facts402-mcp) | 12 utility checks for agents: IBAN, EU VAT, phone, email, FX, LEI, OFAC sanctions, domain age, business days, weather, sun | `uvx facts402-mcp` |
+| [`facts402-mcp`](facts402-mcp) | Find the right paid x402 API for a task (`x402_recommend`, $0.005; free preview), plus 12 utility checks for agents: IBAN, EU VAT, phone, email, FX, LEI, OFAC sanctions, domain age, business days, weather, sun | `uvx facts402-mcp` |
 
 Free preview tools work without a wallet. Paid tools need `X402_PRIVATE_KEY` (a wallet with USDC on Base) and enforce per-call and per-session spend caps. See each package's README.
 

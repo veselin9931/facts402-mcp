@@ -4,15 +4,15 @@ build-backend = "hatchling.build"
 
 [project]
 name = "facts402-mcp"
-version = "0.1.0"
-description = "MCP server: pay-per-call fact checks for AI agents (IBAN, EU VAT, OFAC sanctions, LEI, phone, email, FX, WHOIS) via x402 USDC on Base. Also the shared core of base-memecoin-guard-mcp."
+version = "0.1.1"
+description = "MCP server: find the right paid x402 API for a task, plus pay-per-call fact checks for AI agents (IBAN, EU VAT, OFAC sanctions, LEI, phone, email, FX, WHOIS) via x402 USDC on Base. Also the shared core of base-memecoin-guard-mcp."
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
 requires-python = ">=3.11"
 authors = [{ name = "facts402" }]
 keywords = [
-    "mcp", "model-context-protocol", "x402", "usdc", "base", "iban", "bic", "vat", "vies", "sanctions", "ofac",
+    "mcp", "model-context-protocol", "x402", "x402-discovery", "api-discovery", "usdc", "base", "iban", "bic", "vat", "vies", "sanctions", "ofac",
     "aml", "kyc", "kyb", "lei", "gleif", "fx", "phone-validation", "email-validation", "whois",
 ]
 classifiers = [

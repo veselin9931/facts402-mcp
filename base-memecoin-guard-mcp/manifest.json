@@ -2,7 +2,7 @@
   "manifest_version": "0.4",
   "name": "base-memecoin-guard-mcp",
   "display_name": "Base Memecoin Guard: honeypot, rug pull, exit liquidity, smart money",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Base memecoin safety for trading agents: honeypot, rug pull, exit liquidity, smart money",
   "long_description": "Safety and alpha for agents trading Base memecoins, paid per call (x402, USDC on Base) from the user's own wallet within a per-call cap and session budget. Before buying: guard_check (honeypot, rug pull, tax, exit liquidity at your size, insiders, snipers, deployer) or the free guard_preview. Attention: pulse_token / pulse_trending (shill score, velocity). Smart money and copy trade: signals_*. After buying: watch_24h / watch_72h / watch_7d alert on liquidity pulls, dev dumps and exit traps; read alerts free with watch_events. Each tool states its price; tools marked FREE need no wallet. Results are automated facts and flags, not investment advice.",
   "author": {
