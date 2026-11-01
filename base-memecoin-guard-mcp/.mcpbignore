@@ -1,0 +1,9 @@
+.venv/
+dist/
+tests/
+scripts/
+.pytest_cache/
+**/__pycache__/
+*.mcpb
+.gitignore
+PUBLISHING.md

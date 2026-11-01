@@ -1,0 +1,43 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.facts402/base-memecoin-guard",
+  "title": "Base Memecoin Guard",
+  "description": "Base memecoin safety for trading agents: honeypot, rug pull, exit liquidity, smart money",
+  "version": "0.1.0",
+  "websiteUrl": "https://guard.facts402.com",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "base-memecoin-guard-mcp",
+      "version": "0.1.0",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "X402_PRIVATE_KEY",
+          "description": "Private key of your own Base mainnet wallet holding a little USDC. Optional: without it only the free tools work.",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "X402_MAX_PER_CALL_USD",
+          "description": "Most a single tool call may pay, in USD",
+          "default": "0.30"
+        },
+        {
+          "name": "X402_SESSION_BUDGET_USD",
+          "description": "Most the server may spend until it restarts, in USD",
+          "default": "2.00"
+        }
+      ]
+    }
+  ],
+  "repository": {
+    "url": "https://github.com/veselin9931/facts402-mcp",
+    "source": "github",
+    "subfolder": "base-memecoin-guard-mcp"
+  }
+}

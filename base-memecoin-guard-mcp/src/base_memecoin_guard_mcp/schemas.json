@@ -1,0 +1,694 @@
+{
+ "generated_at": "2026-11-01T15:40:58+00:00",
+ "routes": {
+  "GET https://guard.facts402.com/v1/guard/preview": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {
+     "token": {
+      "description": "Base mainnet token contract address",
+      "pattern": "^0x[0-9a-fA-F]{40}$",
+      "type": "string"
+     }
+    },
+    "required": [
+     "token"
+    ],
+    "type": "object"
+   },
+   "price_usd": null
+  },
+  "GET https://pulse.facts402.com/v1/pulse/preview": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {
+     "token": {
+      "description": "Base mainnet token contract address",
+      "pattern": "^0x[0-9a-fA-F]{40}$",
+      "type": "string"
+     }
+    },
+    "required": [
+     "token"
+    ],
+    "type": "object"
+   },
+   "price_usd": null
+  },
+  "GET https://pulse.facts402.com/v1/pulse/trending": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {
+     "min_liq_usd": {
+      "default": 0,
+      "examples": [
+       50000
+      ],
+      "minimum": 0,
+      "type": "number"
+     },
+     "window": {
+      "default": "1h",
+      "enum": [
+       "1h",
+       "6h",
+       "24h"
+      ],
+      "examples": [
+       "1h"
+      ]
+     }
+    },
+    "required": [],
+    "type": "object"
+   },
+   "price_usd": "0.08"
+  },
+  "GET https://signals.facts402.com/v1/signals/feed": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {
+     "limit": {
+      "default": 50,
+      "description": "page size (max 50)",
+      "maximum": 50,
+      "minimum": 1,
+      "type": "integer"
+     },
+     "min_score": {
+      "default": 0,
+      "description": "only signals scoring at least this (0-100)",
+      "examples": [
+       60
+      ],
+      "maximum": 100,
+      "minimum": 0,
+      "type": "integer"
+     },
+     "since": {
+      "description": "cursor: `next_cursor` of your previous page (omit or 0 for the oldest)",
+      "examples": [
+       1200
+      ],
+      "maximum": 9223372036854775807,
+      "minimum": 0,
+      "type": "integer"
+     },
+     "types": {
+      "description": "comma-separated signal types to include (default all): SMART_ACCUMULATION, EARLY_SMART_ENTRY, SMART_EXIT, ATTENTION_CONFIRMED",
+      "examples": [
+       "SMART_ACCUMULATION,EARLY_SMART_ENTRY"
+      ],
+      "maxLength": 200,
+      "pattern": "^[A-Z_]+(,[A-Z_]+)*$",
+      "type": "string"
+     }
+    },
+    "required": [],
+    "type": "object"
+   },
+   "price_usd": "0.15"
+  },
+  "GET https://signals.facts402.com/v1/signals/leaderboard": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {
+     "period": {
+      "default": "30d",
+      "description": "PnL window: 7d or 30d",
+      "enum": [
+       "7d",
+       "30d"
+      ],
+      "examples": [
+       "7d"
+      ],
+      "type": "string"
+     }
+    },
+    "required": [],
+    "type": "object"
+   },
+   "price_usd": "0.1"
+  },
+  "GET https://signals.facts402.com/v1/signals/performance": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {},
+    "required": [],
+    "type": "object"
+   },
+   "price_usd": null
+  },
+  "GET https://signals.facts402.com/v1/signals/preview": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {},
+    "required": [],
+    "type": "object"
+   },
+   "price_usd": null
+  },
+  "GET https://signals.facts402.com/v1/signals/wallet": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {
+     "address": {
+      "description": "Base wallet address (EOA or smart account)",
+      "examples": [
+       "0x9f3a2b6c51d0e4a87b2c3d4e5f60718293a4b5c6"
+      ],
+      "pattern": "^0x[0-9a-fA-F]{40}$",
+      "type": "string"
+     }
+    },
+    "required": [
+     "address"
+    ],
+    "type": "object"
+   },
+   "price_usd": "0.05"
+  },
+  "POST https://guard.facts402.com/v1/guard/batch": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {
+     "position_usd": {
+      "description": "Position size in USD for the exit-liquidity simulation (default 500)",
+      "examples": [
+       500
+      ],
+      "maximum": 10000000,
+      "minimum": 1,
+      "type": "number"
+     },
+     "tokens": {
+      "examples": [
+       [
+        "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+        "0x532f27101965dd16442e59d40670faf5ebb142e4"
+       ]
+      ],
+      "items": {
+       "description": "Base mainnet (chain id 8453) ERC-20 token contract address",
+       "pattern": "^0x[0-9a-fA-F]{40}$",
+       "type": "string"
+      },
+      "maxItems": 10,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+     }
+    },
+    "required": [
+     "tokens"
+    ],
+    "type": "object"
+   },
+   "price_usd": "0.3"
+  },
+  "POST https://guard.facts402.com/v1/guard/check": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {
+     "position_usd": {
+      "description": "Position size in USD for the exit-liquidity simulation (default 500)",
+      "examples": [
+       500
+      ],
+      "maximum": 10000000,
+      "minimum": 1,
+      "type": "number"
+     },
+     "token": {
+      "description": "Base mainnet (chain id 8453) ERC-20 token contract address",
+      "examples": [
+       "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
+      ],
+      "pattern": "^0x[0-9a-fA-F]{40}$",
+      "type": "string"
+     }
+    },
+    "required": [
+     "token"
+    ],
+    "type": "object"
+   },
+   "price_usd": "0.05"
+  },
+  "POST https://guard.facts402.com/v1/guard/exit": {
+   "input_schema": {
+    "additionalProperties": false,
+    "description": "Exactly one of `position_usd` / `amount_tokens`.",
+    "properties": {
+     "amount_tokens": {
+      "description": "Token amount in RAW units (the token's smallest unit, i.e. amount * 10^decimals) as a decimal string",
+      "pattern": "^[1-9][0-9]{0,77}$",
+      "type": "string"
+     },
+     "position_usd": {
+      "description": "Position size in USD for the exit-liquidity simulation (default 500)",
+      "examples": [
+       2500
+      ],
+      "maximum": 10000000,
+      "minimum": 1,
+      "type": "number"
+     },
+     "token": {
+      "description": "Base mainnet (chain id 8453) ERC-20 token contract address",
+      "examples": [
+       "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
+      ],
+      "pattern": "^0x[0-9a-fA-F]{40}$",
+      "type": "string"
+     }
+    },
+    "required": [
+     "token"
+    ],
+    "type": "object"
+   },
+   "price_usd": "0.02"
+  },
+  "POST https://pulse.facts402.com/v1/pulse/search": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {
+     "limit": {
+      "default": 50,
+      "description": "maximum posts returned (newest first)",
+      "examples": [
+       20
+      ],
+      "maximum": 100,
+      "minimum": 1,
+      "type": "integer"
+     },
+     "query": {
+      "description": "full-text query (web-search syntax: words, \"phrases\", -exclude)",
+      "examples": [
+       "degen airdrop"
+      ],
+      "maxLength": 200,
+      "minLength": 1,
+      "type": "string"
+     },
+     "since": {
+      "description": "ISO-8601 timestamp with timezone, at most 30 days ago (default: 30 days ago)",
+      "format": "date-time",
+      "type": "string"
+     },
+     "sources": {
+      "description": "indexed post sources to search; disabled ones are reported as source_disabled",
+      "examples": [
+       [
+        "farcaster"
+       ]
+      ],
+      "items": {
+       "enum": [
+        "farcaster",
+        "telegram",
+        "news"
+       ],
+       "type": "string"
+      },
+      "maxItems": 3,
+      "minItems": 1,
+      "type": "array"
+     }
+    },
+    "required": [
+     "query"
+    ],
+    "type": "object"
+   },
+   "price_usd": "0.03"
+  },
+  "POST https://pulse.facts402.com/v1/pulse/token": {
+   "input_schema": {
+    "additionalProperties": false,
+    "description": "Provide exactly one of: token, ticker.",
+    "properties": {
+     "ticker": {
+      "description": "token symbol, e.g. DEGEN or $DEGEN (resolved in our Base index)",
+      "pattern": "^\\$?[A-Za-z0-9]{1,20}$",
+      "type": "string"
+     },
+     "token": {
+      "description": "Base mainnet token contract address (0x...)",
+      "examples": [
+       "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
+      ],
+      "pattern": "^0x[0-9a-fA-F]{40}$",
+      "type": "string"
+     },
+     "window": {
+      "default": "24h",
+      "description": "look-back window; velocity compares it with the previous equal window",
+      "enum": [
+       "1h",
+       "6h",
+       "24h"
+      ],
+      "examples": [
+       "24h"
+      ],
+      "type": "string"
+     }
+    },
+    "type": "object"
+   },
+   "price_usd": "0.04"
+  },
+  "POST https://signals.facts402.com/v1/signals/brief": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {
+     "horizon": {
+      "description": "trading horizon the brief is written for: 1h, 24h or 7d",
+      "enum": [
+       "1h",
+       "24h",
+       "7d"
+      ],
+      "examples": [
+       "24h"
+      ],
+      "type": "string"
+     },
+     "position_usd": {
+      "description": "your position size in USD (exit-liquidity context)",
+      "examples": [
+       500
+      ],
+      "maximum": 10000000,
+      "minimum": 1,
+      "type": "number"
+     },
+     "token": {
+      "description": "Base mainnet (chain id 8453) ERC-20 token contract address",
+      "examples": [
+       "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
+      ],
+      "pattern": "^0x[0-9a-fA-F]{40}$",
+      "type": "string"
+     }
+    },
+    "required": [
+     "token",
+     "horizon"
+    ],
+    "type": "object"
+   },
+   "price_usd": "0.25"
+  },
+  "POST https://signals.facts402.com/v1/signals/token": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {
+     "token": {
+      "description": "Base mainnet (chain id 8453) ERC-20 token contract address",
+      "examples": [
+       "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
+      ],
+      "pattern": "^0x[0-9a-fA-F]{40}$",
+      "type": "string"
+     }
+    },
+    "required": [
+     "token"
+    ],
+    "type": "object"
+   },
+   "price_usd": "0.1"
+  },
+  "POST https://watch.facts402.com/v1/watch/24h": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {
+     "events": {
+      "description": "event types to enable (default: all)",
+      "examples": [
+       [
+        "LIQUIDITY_DROP",
+        "DEPLOYER_SELL",
+        "HONEYPOT_FLIP",
+        "EXIT_TRAP",
+        "SMART_EXIT"
+       ]
+      ],
+      "items": {
+       "enum": [
+        "LIQUIDITY_DROP",
+        "DEPLOYER_SELL",
+        "INSIDER_CLUSTER_SELL",
+        "OWNER_ACTION",
+        "TAX_CHANGE",
+        "HONEYPOT_FLIP",
+        "EXIT_TRAP",
+        "SMART_EXIT",
+        "ATTENTION_COLLAPSE",
+        "ATTENTION_SPIKE",
+        "WATCH_EXPIRING"
+       ],
+       "type": "string"
+      },
+      "maxItems": 11,
+      "minItems": 1,
+      "type": "array"
+     },
+     "position_usd": {
+      "description": "your position size in USD (exit-trap threshold)",
+      "examples": [
+       500
+      ],
+      "exclusiveMinimum": 0,
+      "maximum": 1000000000.0,
+      "type": "number"
+     },
+     "thresholds": {
+      "additionalProperties": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "description": "per event type overrides, e.g. {\"LIQUIDITY_DROP\": {\"drop_pct\": 20}}",
+      "examples": [
+       {
+        "LIQUIDITY_DROP": {
+         "drop_pct": 25
+        }
+       }
+      ],
+      "maxProperties": 11,
+      "type": "object"
+     },
+     "token": {
+      "description": "Base mainnet (chain id 8453) ERC-20 token contract address",
+      "examples": [
+       "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
+      ],
+      "pattern": "^0x[0-9a-fA-F]{40}$",
+      "type": "string"
+     },
+     "webhook_url": {
+      "description": "optional HTTPS endpoint for HMAC-signed webhook alerts (public host, port 443/8443); events can always be pulled with GET /v1/watch/{id}/events",
+      "maxLength": 2048,
+      "pattern": "^https://",
+      "type": "string"
+     }
+    },
+    "required": [
+     "token"
+    ],
+    "type": "object"
+   },
+   "price_usd": "0.12"
+  },
+  "POST https://watch.facts402.com/v1/watch/72h": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {
+     "events": {
+      "description": "event types to enable (default: all)",
+      "examples": [
+       [
+        "LIQUIDITY_DROP",
+        "DEPLOYER_SELL",
+        "HONEYPOT_FLIP",
+        "EXIT_TRAP",
+        "SMART_EXIT"
+       ]
+      ],
+      "items": {
+       "enum": [
+        "LIQUIDITY_DROP",
+        "DEPLOYER_SELL",
+        "INSIDER_CLUSTER_SELL",
+        "OWNER_ACTION",
+        "TAX_CHANGE",
+        "HONEYPOT_FLIP",
+        "EXIT_TRAP",
+        "SMART_EXIT",
+        "ATTENTION_COLLAPSE",
+        "ATTENTION_SPIKE",
+        "WATCH_EXPIRING"
+       ],
+       "type": "string"
+      },
+      "maxItems": 11,
+      "minItems": 1,
+      "type": "array"
+     },
+     "position_usd": {
+      "description": "your position size in USD (exit-trap threshold)",
+      "examples": [
+       500
+      ],
+      "exclusiveMinimum": 0,
+      "maximum": 1000000000.0,
+      "type": "number"
+     },
+     "thresholds": {
+      "additionalProperties": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "description": "per event type overrides, e.g. {\"LIQUIDITY_DROP\": {\"drop_pct\": 20}}",
+      "examples": [
+       {
+        "LIQUIDITY_DROP": {
+         "drop_pct": 25
+        }
+       }
+      ],
+      "maxProperties": 11,
+      "type": "object"
+     },
+     "token": {
+      "description": "Base mainnet (chain id 8453) ERC-20 token contract address",
+      "examples": [
+       "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
+      ],
+      "pattern": "^0x[0-9a-fA-F]{40}$",
+      "type": "string"
+     },
+     "webhook_url": {
+      "description": "optional HTTPS endpoint for HMAC-signed webhook alerts (public host, port 443/8443); events can always be pulled with GET /v1/watch/{id}/events",
+      "maxLength": 2048,
+      "pattern": "^https://",
+      "type": "string"
+     }
+    },
+    "required": [
+     "token"
+    ],
+    "type": "object"
+   },
+   "price_usd": "0.3"
+  },
+  "POST https://watch.facts402.com/v1/watch/7d": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {
+     "events": {
+      "description": "event types to enable (default: all)",
+      "examples": [
+       [
+        "LIQUIDITY_DROP",
+        "DEPLOYER_SELL",
+        "HONEYPOT_FLIP",
+        "EXIT_TRAP",
+        "SMART_EXIT"
+       ]
+      ],
+      "items": {
+       "enum": [
+        "LIQUIDITY_DROP",
+        "DEPLOYER_SELL",
+        "INSIDER_CLUSTER_SELL",
+        "OWNER_ACTION",
+        "TAX_CHANGE",
+        "HONEYPOT_FLIP",
+        "EXIT_TRAP",
+        "SMART_EXIT",
+        "ATTENTION_COLLAPSE",
+        "ATTENTION_SPIKE",
+        "WATCH_EXPIRING"
+       ],
+       "type": "string"
+      },
+      "maxItems": 11,
+      "minItems": 1,
+      "type": "array"
+     },
+     "position_usd": {
+      "description": "your position size in USD (exit-trap threshold)",
+      "examples": [
+       500
+      ],
+      "exclusiveMinimum": 0,
+      "maximum": 1000000000.0,
+      "type": "number"
+     },
+     "thresholds": {
+      "additionalProperties": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "description": "per event type overrides, e.g. {\"LIQUIDITY_DROP\": {\"drop_pct\": 20}}",
+      "examples": [
+       {
+        "LIQUIDITY_DROP": {
+         "drop_pct": 25
+        }
+       }
+      ],
+      "maxProperties": 11,
+      "type": "object"
+     },
+     "token": {
+      "description": "Base mainnet (chain id 8453) ERC-20 token contract address",
+      "examples": [
+       "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
+      ],
+      "pattern": "^0x[0-9a-fA-F]{40}$",
+      "type": "string"
+     },
+     "webhook_url": {
+      "description": "optional HTTPS endpoint for HMAC-signed webhook alerts (public host, port 443/8443); events can always be pulled with GET /v1/watch/{id}/events",
+      "maxLength": 2048,
+      "pattern": "^https://",
+      "type": "string"
+     }
+    },
+    "required": [
+     "token"
+    ],
+    "type": "object"
+   },
+   "price_usd": "0.6"
+  },
+  "POST https://watch.facts402.com/v1/watch/extend-24h": {
+   "input_schema": {
+    "additionalProperties": false,
+    "properties": {
+     "watch_id": {
+      "description": "watch id returned by the create call",
+      "examples": [
+       "w_3kTq9xV2mPz7LrB1nYc5Hd"
+      ],
+      "pattern": "^w_[A-Za-z0-9_-]{22}$",
+      "type": "string"
+     }
+    },
+    "required": [
+     "watch_id"
+    ],
+    "type": "object"
+   },
+   "price_usd": "0.12"
+  }
+ }
+}

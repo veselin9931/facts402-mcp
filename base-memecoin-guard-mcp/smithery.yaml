@@ -1,0 +1,34 @@
+# Smithery config for the local (stdio) server, installed from PyPI with uvx.
+# Smithery now distributes local servers as MCPB bundles (see manifest.json and PUBLISHING.md);
+# this file covers tools that still read the classic startCommand format.
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      x402PrivateKey:
+        type: string
+        description: >-
+          Private key of your own Base mainnet wallet holding a little USDC (use a dedicated hot wallet).
+          Optional: without it only the free tools work.
+      maxPerCallUsd:
+        type: string
+        default: "0.30"
+        description: Most a single tool call may pay, in USD.
+      sessionBudgetUsd:
+        type: string
+        default: "2.00"
+        description: Most the server may spend until it restarts, in USD.
+  commandFunction: |-
+    (config) => ({
+      command: 'uvx',
+      args: ['base-memecoin-guard-mcp'],
+      env: Object.fromEntries(Object.entries({
+        X402_PRIVATE_KEY: config.x402PrivateKey,
+        X402_MAX_PER_CALL_USD: config.maxPerCallUsd,
+        X402_SESSION_BUDGET_USD: config.sessionBudgetUsd,
+      }).filter(([, value]) => value))
+    })
+  exampleConfig:
+    maxPerCallUsd: "0.30"
+    sessionBudgetUsd: "2.00"

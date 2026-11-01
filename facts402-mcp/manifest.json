@@ -1,0 +1,133 @@
+{
+  "manifest_version": "0.4",
+  "name": "facts402-mcp",
+  "display_name": "facts402: fact checks for agents (IBAN, VAT, sanctions, FX)",
+  "version": "0.1.0",
+  "description": "Pay-per-call fact checks for agents: IBAN, EU VAT, OFAC sanctions, LEI, phone, email, FX",
+  "long_description": "Verified fact checks at $0.01 per call (x402, USDC on Base), paid from the user's own wallet within a per-call cap and session budget: IBAN/BIC validation, EU VAT (VIES), OFAC sanctions screening, GLEIF LEI company lookup, phone and email validation, ECB FX conversion, domain age (RDAP/WHOIS), business days and holidays, weather, sunrise/sunset and Base token contract facts. Each tool states its price.",
+  "author": {
+    "name": "facts402",
+    "url": "https://api.facts402.com"
+  },
+  "homepage": "https://api.facts402.com",
+  "license": "MIT",
+  "keywords": [
+    "iban",
+    "bic",
+    "vat",
+    "vies",
+    "sanctions",
+    "ofac",
+    "aml",
+    "kyc",
+    "kyb",
+    "lei",
+    "fx",
+    "phone",
+    "email",
+    "whois",
+    "x402",
+    "usdc"
+  ],
+  "server": {
+    "type": "uv",
+    "entry_point": "src/facts402_mcp/__main__.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "${__dirname}",
+        "facts402-mcp"
+      ],
+      "env": {
+        "X402_PRIVATE_KEY": "${user_config.x402_private_key}",
+        "X402_MAX_PER_CALL_USD": "${user_config.max_per_call_usd}",
+        "X402_SESSION_BUDGET_USD": "${user_config.session_budget_usd}"
+      }
+    }
+  },
+  "user_config": {
+    "x402_private_key": {
+      "type": "string",
+      "title": "Wallet private key",
+      "sensitive": true,
+      "required": true,
+      "description": "Private key of your own Base mainnet wallet holding a little USDC. Needed to call the tools: without it they only report their price."
+    },
+    "max_per_call_usd": {
+      "type": "string",
+      "title": "Max USD per call",
+      "required": false,
+      "default": "0.30",
+      "description": "Most a single tool call may pay."
+    },
+    "session_budget_usd": {
+      "type": "string",
+      "title": "Session budget USD",
+      "required": false,
+      "default": "2.00",
+      "description": "Most the server may spend until it restarts."
+    }
+  },
+  "tools": [
+    {
+      "name": "iban_check",
+      "description": "Validate an IBAN (structure, mod-97 and national BBAN checksum) and return country, bank code, account code, bank name, BIC/SWIFT and SEPA membership. Use before a payout, invoice or SEPA transfer. Price: $0.01 USDC per call via x402 on Base, paid from your own wallet (X402_PRIVATE_KEY) within your per-call cap and session budget; charged only for a successful answer."
+    },
+    {
+      "name": "eu_vat_check",
+      "description": "Validate an EU VAT number: offline format and check-digit test plus a live lookup in the European Commission VIES, returning registration status, company name and address. For B2B invoicing, reverse charge, KYB and onboarding. Price: $0.01 USDC per call via x402 on Base, paid from your own wallet (X402_PRIVATE_KEY) within your per-call cap and session budget; charged only for a successful answer."
+    },
+    {
+      "name": "sanctions_screen",
+      "description": "Fuzzy-screen a person, company, vessel or aircraft name against the US Treasury OFAC SDN sanctions list including aliases (refreshed every 6 h): matches with score, type, sanctions programs and remarks, plus the closest near-miss. AML / KYC / KYB compliance screening aid. Price: $0.01 USDC per call via x402 on Base, paid from your own wallet (X402_PRIVATE_KEY) within your per-call cap and session budget; charged only for a successful answer."
+    },
+    {
+      "name": "lei_lookup",
+      "description": "Look up a legal entity in the official GLEIF LEI index: by 20-character LEI get legal name, status, jurisdiction, addresses, registration dates and direct/ultimate parent; or search by company name for up to 5 candidates. For KYB, onboarding and finance agents. Price: $0.01 USDC per call via x402 on Base, paid from your own wallet (X402_PRIVATE_KEY) within your per-call cap and session budget; charged only for a successful answer."
+    },
+    {
+      "name": "phone_check",
+      "description": "Validate and normalise any phone number worldwide: valid/possible, E.164 and national formats, country, line type (mobile, fixed line, toll-free, VoIP), original carrier, location and time zones. For CRM, outreach, KYC and calling agents. Price: $0.01 USDC per call via x402 on Base, paid from your own wallet (X402_PRIVATE_KEY) within your per-call cap and session budget; charged only for a successful answer."
+    },
+    {
+      "name": "email_check",
+      "description": "Check an email address before sending: RFC syntax and normalisation, live DNS and MX records, null MX, disposable/throwaway domain and role-account (info@, support@) flags. No SMTP probing. For lead-gen, signup and outreach agents. Price: $0.01 USDC per call via x402 on Base, paid from your own wallet (X402_PRIVATE_KEY) within your per-call cap and session budget; charged only for a successful answer."
+    },
+    {
+      "name": "fx_convert",
+      "description": "Convert an amount between ~30 currencies at official European Central Bank (ECB) reference exchange rates, latest or any day in the last 90 days, with the publication date used and exact decimal results. For pricing, invoicing, travel-budget and accounting agents. Price: $0.01 USDC per call via x402 on Base, paid from your own wallet (X402_PRIVATE_KEY) within your per-call cap and session budget; charged only for a successful answer."
+    },
+    {
+      "name": "domain_check",
+      "description": "Registration facts for any domain via RDAP (the WHOIS successor): registered or not, creation and expiry dates, domain age in days, registrar, EPP status, nameservers and DNSSEC. For fraud, phishing link-safety, lead-qualification and KYB agents. Price: $0.01 USDC per call via x402 on Base, paid from your own wallet (X402_PRIVATE_KEY) within your per-call cap and session budget; charged only for a successful answer."
+    },
+    {
+      "name": "business_days",
+      "description": "Count business days between two dates for a country (optionally a state/region) and list the public holidays and weekends in the range. For payment deadlines, SLAs, delivery dates and scheduling. Price: $0.01 USDC per call via x402 on Base, paid from your own wallet (X402_PRIVATE_KEY) within your per-call cap and session budget; charged only for a successful answer."
+    },
+    {
+      "name": "weather_forecast",
+      "description": "Weather forecast for any latitude/longitude: current conditions plus up to 7 local-day summaries (min/max temperature, precipitation, wind, weather symbol) in the place's own time zone. Data from MET Norway. For travel, events and logistics agents. Price: $0.01 USDC per call via x402 on Base, paid from your own wallet (X402_PRIVATE_KEY) within your per-call cap and session budget; charged only for a successful answer."
+    },
+    {
+      "name": "sun_times",
+      "description": "Sunrise, sunset, solar noon, civil dawn/dusk, golden hour and day length for any coordinates and date, in local time; polar day/night flagged. For travel, photography, events and outdoor planning. Price: $0.01 USDC per call via x402 on Base, paid from your own wallet (X402_PRIVATE_KEY) within your per-call cap and session budget; charged only for a successful answer."
+    },
+    {
+      "name": "base_token_check",
+      "description": "Raw on-chain facts for a Base mainnet ERC-20 token contract, read at one block: is it a contract, EIP-1967 proxy / implementation / admin, name, symbol, decimals, totalSupply, owner, and whether mint, pause or blacklist function selectors appear in the bytecode. Facts only, no rating. Price: $0.01 USDC per call via x402 on Base, paid from your own wallet (X402_PRIVATE_KEY) within your per-call cap and session budget; charged only for a successful answer."
+    }
+  ],
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "win32",
+      "linux"
+    ],
+    "runtimes": {
+      "python": ">=3.11"
+    }
+  }
+}

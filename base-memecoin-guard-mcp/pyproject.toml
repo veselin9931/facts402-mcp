@@ -1,0 +1,49 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "base-memecoin-guard-mcp"
+version = "0.1.0"
+description = "MCP server for Base memecoin trading agents: honeypot and rug pull checks, exit liquidity, insider/sniper forensics, smart money and copy trade signals, social attention, position watch alerts. Pay per call with x402 USDC."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+authors = [{ name = "facts402" }]
+keywords = [
+    "mcp", "model-context-protocol", "x402", "base", "memecoin", "honeypot", "rug-pull", "rug-checker",
+    "exit-liquidity", "insider", "sniper", "smart-money", "copy-trade", "whale-tracker", "trading-agent",
+    "crypto", "token-safety", "usdc",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
+# The shared client, payment and budget code lives in facts402-mcp.
+dependencies = ["facts402-mcp>=0.1.0,<0.2"]
+
+[project.optional-dependencies]
+test = ["pytest>=8", "pytest-asyncio>=0.24"]
+
+[project.scripts]
+base-memecoin-guard-mcp = "base_memecoin_guard_mcp.server:main"
+
+[project.urls]
+Homepage = "https://guard.facts402.com"
+Repository = "https://github.com/veselin9931/facts402-mcp"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/base_memecoin_guard_mcp"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "README.md", "LICENSE"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = ["live: calls the real services (free routes, or the zero-funds payment path); run with -m live"]
+addopts = "-m 'not live'"
